@@ -23,5 +23,52 @@ SQLite DB built by Python code on /g/data, lists tokenized file paths. This is u
 * Identify common patterns across all files in variables, dimensions
 * Use to develope use-case read code
 
+```R
+library(dplyr)
+db <- src_sqlite("/g/data1/ua6/unofficial-ESG-replica/tmp/tree/cmip5_raijin_latest.db")
+tab <- tbl(db, "cmip5")
+
+id <- collect(filter(tab, model == "ACCESS1-3"))$id[10]
+print(id)
+
+library(rancid)
+fs <- sample(list.files(id, full.names = TRUE), 1)
+
+nc <- NetCDF(fs)
+
+ nc$variable
 
 
+Source: local data frame [6 x 16]
+
+          name ndims natts   prec         units                  longname
+         (chr) (int) (int)  (chr)         (chr)                     (chr)
+1    time_bnds     2     0 double                               time_bnds
+2          lat     2     4  float degrees_north       latitude coordinate
+3          lon     2     4  float  degrees_east      longitude coordinate
+4 lat_vertices     3     1  float degrees_north              lat_vertices
+5 lon_vertices     3     1  float  degrees_east              lon_vertices
+6          wfo     3    12  float    kg m-2 s-1 Water Flux into Sea Water
+Variables not shown: group_index (int), storage (dbl), shuffle (lgl),
+  compression (lgl), unlim (lgl), make_missing_value (lgl), missval (dbl),
+  hasAddOffset (lgl), hasScaleFact (lgl), id (dbl)
+
+tab <- collect(tab)
+ss <- sample(nrow(tab), 100)
+vv <- vector("list", length(ss))
+system.time({
+for (i in seq_along(vv)) {
+fs <- sample(list.files(tab$id[i], full.names = TRUE, pattern = "nc$"), 1)
+a <- try(NetCDF(fs))
+if (!inherits(a, "try-error")) vv[[i]] <- a
+}
+})
+#  user  system elapsed
+#  3.203  69.720 113.174
+
+object.size(vv)
+# 4.88 Mb
+ ```
+  save(vv, file = "~/cmip5_metadatasample.rda")
+
+Etc. 
