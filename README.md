@@ -68,7 +68,10 @@ if (!inherits(a, "try-error")) vv[[i]] <- a
 
 object.size(vv)
 # 4.88 Mb
- ```
-  save(vv, file = "~/cmip5_metadatasample.rda")
 
+any(unlist(lapply(vv, is.null)))
+[1] FALSE
+
+  save(vv, file = "~/cmip5_metadatasample.rda")
+```
 Etc. 
