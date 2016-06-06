@@ -139,3 +139,44 @@ plot(romsmap(w, lonlat), add = TRUE)
 ```
 
 ![](Clipboard02.png)
+
+
+module load         proj/4.9.0  netcdf/4.3.3.1p  gdal/2.0.0 
+```{r}
+dp <- "/g/data/ua6/unofficial-ESG-replica/tmp/tree/tds.ucar.edu/thredds/fileServer/datazone/cmip5_data/cmip5/output1/NCAR/CCSM4/rcp85/mon/ocean/Omon/r6i1p1/v20140820/tauuo"
+library(raster)
+f <- list.files(dp, full.names = TRUE)
+library(rancid)
+library(angstroms)
+nc <- NetCDF(f)
+print(nc$variable)
+
+Source: local data frame [6 x 16]
+
+          name ndims natts   prec         units                  longname
+         (chr) (int) (int)  (chr)         (chr)                     (chr)
+1          lat     2     4  float degrees_north       latitude coordinate
+2 lat_vertices     3     1  float degrees_north              lat_vertices
+3          lon     2     4  float  degrees_east      longitude coordinate
+4 lon_vertices     3     1  float  degrees_east              lon_vertices
+5        tauuo     3    12  float         N m-2 Surface Downward X Stress
+6    time_bnds     2     0 double                               time_bnds
+Variables not shown: group_index (int), storage (dbl), shuffle (lgl),
+  compression (lgl), unlim (lgl), make_missing_value (lgl), missval (dbl),
+  hasAddOffset (lgl), hasScaleFact (lgl), id (dbl)
+
+
+lonlat <- romscoords(f, c("lon", "lat"))
+#devtools::install_github("AustralianAntarcticDivision/rbgm")
+library(rbgm)
+fname <- system.file("extdata", "Antarctica_28.bgm", package = "rbgm")
+bgm <- bgmfile(fname)
+plot(boxSpatial(bgm), col = grey(seq(0, 1, length = nrow(bgm$boxes))))
+#devtools::install_github("mdsumner/angstroms")
+ar <- romsmap(boxSpatial(bgm), lonlat)
+
+
+## now extract!!
+ cn <- extract(brick(romsdata(f, "tauuo")), ar, cellnumbers = TRUE)
+
+
