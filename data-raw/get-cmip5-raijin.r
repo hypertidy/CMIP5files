@@ -2,12 +2,12 @@ download.file("http://climate-cms.unsw.wikispaces.net/file/view/cmip5_raijin.db/
               "data-raw/cmip5_raijin.db", mode = "wb")
 library(dplyr)
 cmip5_db <- src_sqlite("data-raw/cmip5_raijin.db")
-cmip5 <- tbl(cm5, "cmip5")
+cmip5 <- tbl(cmip5_db, "cmip5")
 library(DT)
 
 
 d <- collect(cmip5) 
-d <- d[, c(setdiff(names(d), "id"), "id")]
+d <- d[1:1000, c(setdiff(names(d), "id"), "id")]
 datatable(d, class = 'cell-border stripe', filter = 'top', options = list(
   pageLength = 35, autoWidth = TRUE
 ))
