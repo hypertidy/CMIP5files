@@ -7,4 +7,4 @@ library(angstroms)
 nc <- NetCDF(f)
 
 print(nc$variable)
-saveRDS(nc, file = file.path("nc", sprintf("%s.rds", nc$file$filename)))
+saveRDS(nc, file = file.path("nc", sprintf("%s.rds", basename(nc$file$filename))))

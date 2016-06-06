@@ -1,9 +1,10 @@
 #!/bin/bash
-#PBS -P a99 
+#PBS -P m68
 #PBS -q normal 
-#PBS -l walltime=00:00:20
-#PBS -l mem=300MB 
-#PBS -l jobfs=1GB
-#PBS -l ncpus=1
-#PBS -l software=r_netcdf.sh
-./rspawn.sh  > r_netcdf_0001.out
+#PBS -l walltime=00:06:00,mem=300MB,ncpus=1
+
+module load   netcdf/4.3.3.1p
+
+cd ~/Git/CMIP5files/data-raw/jobs
+~/packages/bin/R CMD BATCH r_netcdf_0001.r
+
