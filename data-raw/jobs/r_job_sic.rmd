@@ -1,0 +1,72 @@
+---
+title: "Habitat Assessment ACCESS1-3 CMIP5"
+author: "Michael Sumner"
+date: "6 June 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+R gives extremely powerful access to database facilities, and also general computational tools for accessing model output. Here we take a quick look at data from CMIP5 for ACCESS1-3. 
+
+## run on raijin
+
+Open the file listing database and have a look around. We can use the dplyr verbs filter and select to easily scan through a table. 
+
+```{r}
+## this was mentioned in discussions about what we were after: 
+##/g/data/ua6/authoritative/IPCC/CMIP5/CSIRO-BOM/ACCESS1-3/rcp85/mon/seaIce/OImon/r1i1p1/files/sic_20120413/sic_OImon_ACCESS1-3_rcp85_r1i1p1_200601-210012.nc
+
+library(dplyr)
+db <- src_sqlite("/g/data1/ua6/unofficial-ESG-replica/tmp/tree/cmip5_raijin_latest.db")
+cmip5 <- tbl(db, "cmip5")
+cmip5 %>% filter(model == "ACCESS1-3") %>% select(-id)
+
+```
+
+Take a closer filter down into the model, ensemble, experiment etc. 
+
+```{r}
+ cmip5 %>% filter(model == "ACCESS1-3", variable == "sic", ensemble == "r1i1p1", experiment == "rcp85", mip == "OImon") %>% select(-id)
+```
+
+From here we'll go for the right matching file, and divorce from the db. 
+
+```{r}
+files <- cmip5 %>% filter(model == "ACCESS1-3", variable == "sic", ensemble == "r1i1p1", experiment == "rcp85", mip == "OImon", version == "v20121203") %>% 
+     collect()
+
+## seems to be one-file per id, sometimes - do better matching in time
+f <- list.files(files$id[1], full.names = TRUE)[1]
+
+print(f)
+
+```
+
+Tool-up and have a look. 
+
+```{r}
+library(angstroms)  ## not really about roms, but it works here too
+library(rancid)
+
+ncdb <- NetCDF(f)
+
+ncdb$variable
+```
+
+It's "sic" that we are after. 
+
+```{r}
+
+coords <- romscoords(f, c("lon", "lat"))
+library(tidyraster)
+library(rbgm)
+b <- bgmfile(system.file("extdata","bgm",  "antarctica_28.bgm", package = "bgmfiles"))
+map <- romsmap(boxSpatial(b), coords)
+
+
+
+```
+
