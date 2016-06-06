@@ -59,7 +59,7 @@ nc$variable
 
 
 
-ss <- sample(nrow(access3), max(c(100, nrow(access3))))
+ss <- sample(nrow(access3), min(c(100, nrow(access3))))
 vv <- vector("list", length(ss))
 system.time({
 for (i in seq_along(vv)) {
