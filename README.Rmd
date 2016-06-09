@@ -20,6 +20,9 @@ simulations "piControl" "historical", "rcp45", "rcp85"
 
 experiment "r1i1p1", 
 
+See: "standard_output.pdf" and http://cmip-pcmdi.llnl.gov/cmip5/data_description.html 
+
+
 # CMIP5files
 
 browseables for CMIP5
