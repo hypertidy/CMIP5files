@@ -16,7 +16,8 @@ knitr::opts_chunk$set(
 
 https://confluence.csiro.au/display/ACCESS/Home
 
-simulations "piControl" "historical", "rcp25", "rcp45"
+simulations "piControl" "historical", "rcp45", "rcp85"
+
 experiment "r1i1p1", 
 
 # CMIP5files
